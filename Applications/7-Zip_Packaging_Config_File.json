@@ -1,0 +1,79 @@
+{
+    "JsonConfigVersion": 1.0,
+    "ProjectSettings": {
+        "ProjectName": "7-Zip_19-0_64bit_x64_NLR_English_Rel1",
+        "ProjectDescription": "7-Zip is a free and open-source file archiver utility used to place groups of files within compressed containers known as archives.",
+        "IconFile": "C:\\Program Files\\7-Zip\\7zFM.exe",
+        "ProjectFileName": "",
+        "WorkingFolder": "C:\\Program Files\\7-Zip\\",
+        "ProjectFolder": "C:\\NIP_software\\7-Zip\\Output\\",
+        "CommandLine": "C:\\Program Files\\7-Zip\\7zFM.exe",
+        "TargetOS": [
+            "Win7-x64",
+            "Win8-x64"
+        ]
+    },
+    "PreCaptureCommands": [],
+    "CaptureSettings": {
+        "CaptureTimeoutSec": 300,
+        "CaptureAllProcesses": false,
+        "IgnoreChangesUnderInstallerPath": true,
+        "ReplaceRegistryShortPaths": true,
+        "RegistryExclusions": [
+            " HKEY_CURRENT_USER\\Software\\Classes",
+            " HKEY_CURRENT_USER\\Software\\Microsoft",
+            " HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Explorer",
+            " HKEY_LOCAL_MACHINE\\\\Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Component Based Servicing",
+            " HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall",
+            " HKEY_LOCAL_MACHINE\\SYSTEM"
+        ],
+        "FileExclusions": [
+            "%winDir%\\Installer\\*.msp",
+            "%winDir%\\Installer\\*.msi"
+        ],
+        "ProcessExclusions": [],
+        "ProcessInclusions": {
+            "IncludeChildProccesses": true,
+            "Include": []
+        }
+    },
+    "CaptureCommands": {
+        "Enabled": true,
+        "Prerequisites": {
+            "Enabled": false,
+            "Commands": []
+        },
+        "InstallerPrefix": "",
+        "InstallerPath": "C:\\NIP_software\\7-Zip\\Installer_cfg\\7-ZIP.exe",
+        "InstallerCommands": "/S",
+        "PostInstallActions": {
+            "Enabled": false,
+            "Commands": []
+        },
+        "DebugMode": false
+    },
+    "ModifyAssets": {
+        "AddFiles": {},
+        "ModifyKeys": {}
+    },
+    "VirtualizationSettings": {
+        "DefaultDispositionLayer": 3,
+        "DefaultServiceVirtualizationAction": "Register",
+        "SandboxFileExclusions": [],
+        "SandboxRegistryExclusions": []
+    },
+    "SecurityOverrideSettings": {
+        "AllowAccessLayer4": {
+            "AllowReadAndCopy": true,
+            "Proccesses": []
+        },
+        "DenyAccessLayer3": []
+    },
+    "OutputSettings": {
+        "EncryptionMethod": "AES-256-Enhanced",
+        "CompressionMethod": "LZMA",
+        "OutputFileNameNoExt": "",
+        "FinalizeIntoSTP": true,
+        "OutputFolder": "C:\\NIP_software\\7-Zip\\Output\\"
+    }
+}
