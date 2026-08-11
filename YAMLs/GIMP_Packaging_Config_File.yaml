@@ -1,0 +1,117 @@
+yamlConfigVersion: 3.1
+PackagingNotes:
+- ""
+
+## Non Cloudpaging Studio settings ##
+AppSettings:
+  AppName: GIMP
+  ProductionSTPRepository: ReplaceMe # The full path to the production STPs folder
+  InstallerDirectory: ReplaceMe # The full path to the folder containing production installers/packages
+  PkgStagingDirectory: ReplaceMe # The full path to the folder where in-progress files will be stored
+  STPBackupDirectory: ReplaceMe # The full path to the folder where completed STPs will be backed up
+  AppAdminWebpage: ReplaceMe #The link to edit the application
+
+PrefetchSettings:
+  LaunchCommands: 'PLAYER' # Cloudpaging Player Launch button
+  Launches: 3
+  RuntimeSeconds: 90
+  VirtualizationSeconds: 20
+
+RetentionSettings:
+  STPCount: 2
+  PackageCount: 3 
+  IssueUnmodifiedDays: 30
+## END Non Cloudpaging Studio settings ##
+
+ProjectSettings:
+  ProjectName: AP_GIMP_{0}_64bit_x64_NLR_EN_Rel1
+  ProjectDescription: GIMP is an acronym for GNU Image Manipulation Program. It is a freely distributed program for such tasks as photo retouching, image composition and image authoring.
+  IconFile: ""
+  ProjectFileName: ""
+  ProjectFolder: C:\Output
+  TargetCommand:
+    CommandLine: C:\Program Files\GIMP {1}\bin\gimp-{0}.exe
+    CommandLineFill: ($app_version.Split('.')[0..1] -join '.'),($app_version.Split('.')[0])
+    WorkingFolder: ""
+  TargetOS:
+  - ""
+
+PreCaptureCommands: []
+
+CaptureSettings:
+  CaptureTimeoutSec: 180
+  CaptureAllProcesses: false
+  IgnoreChangesUnderInstallerPath: true
+  ReplaceRegistryShortPaths: true
+  FileExclusions:
+  - '%winDir%\Installer\*.msp'
+  - '%winDir%\Installer\*.msi'
+  - '%programdata%\Microsoft\NetFramework' 
+  - '%programdata%\Microsoft\Windows Defender'
+  - '%userprofile%' # Includes <LocalAppData>, <LocalAppDataLow>, & <RoamingAppData>
+  RegistryExclusions:
+  - HKEY_LOCAL_MACHINE\SYSTEM
+  - HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\SystemCertificates
+  - HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Wbem
+  - HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT
+  - HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node
+  - HKEY_USERS
+  - HKEY_CURRENT_USER
+  ProcessExclusions:
+  - C:\Windows\System32\svchost.exe
+  ProcessInclusions:
+    IncludeChildProccesses: false
+    Include: []
+
+InstallerDownload:
+  DownloadURL: ""
+  DownloadPath: ""
+  SHA-256: ""
+
+CaptureCommands:
+  Enabled: true
+  PrerequisiteDownload: {}
+  Prerequisites:
+    Enabled: false
+    Commands: []
+  InstallerPrefix: ""
+  InstallerPath: ""
+  Installer: Deploy-Application.exe # start-package specific
+  # InstallerFill: "" # functions the same as CommandLineFill - see GIMP for example
+  InstallerCommands: -DeployMode Silent
+  InstallerLogPath: 'C:\Windows\Logs\Software\*{0}*PSAppDeployToolkit*' # start-package specific
+  InstallerProcess: '' # start-package specific
+  PostInstallActions:
+    Enabled: false
+    Commands: []
+  DebugMode: false
+
+ModifyAssets:
+  AddFiles: {}
+  ModifyKeys: {}
+
+VirtualizationSettings:
+  DefaultDispositionLayer: 3
+  DefaultServiceVirtualizationAction: Register
+  FileDispositionLayers:
+    AppData:
+      Path: '%AppData%'
+      Layer: 2
+      Recurse: true
+  RegistryDispositionLayers: {}
+  SandboxFileExclusions: []
+  SandboxRegistryExclusions: []
+
+SecurityOverrideSettings:
+  AllowAccessLayer4:
+    AllowReadAndCopy: true
+    Proccesses: []
+  DenyAccessLayer3: []
+  
+OutputSettings:
+  EncryptionMethod: AES-256-Enhanced
+  CompressionMethod: LZMA
+  OutputFileNameNoExt: ""
+  FinalizeIntoSTP: false
+  OutputFolder: C:\AP_Work
+

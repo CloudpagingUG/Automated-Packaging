@@ -1,0 +1,118 @@
+yamlConfigVersion: 3.1
+PackagingNotes:
+- ""
+
+## Non Cloudpaging Studio settings ##
+AppSettings:
+  AppName: GIT for Windows
+  ProductionSTPRepository: ReplaceMe # The full path to the production STPs folder
+  InstallerDirectory: ReplaceMe # The full path to the folder containing production installers/packages
+  PkgStagingDirectory: ReplaceMe # The full path to the folder where in-progress files will be stored
+  STPBackupDirectory: ReplaceMe # The full path to the folder where completed STPs will be backed up
+  AppAdminWebpage: ReplaceMe #The link to edit the application
+
+PrefetchSettings:
+  LaunchCommands: 'PLAYER' # Cloudpaging Player Launch button
+  Launches: 2
+  RuntimeSeconds: 15
+  VirtualizationSeconds: 5
+
+RetentionSettings:
+  STPCount: 2
+  PackageCount: 3 
+  IssueUnmodifiedDays: 30
+## END Non Cloudpaging Studio settings ##
+
+ProjectSettings:
+  ProjectName: AP_GIT-for-Windows_{0}_64bit_x64_NLR_EN_Rel1
+  ProjectDescription: Git is a free and open source distributed version control system designed to handle everything from small to very large projects with speed and efficiency.
+  IconFile: ""
+  ProjectFileName: ""
+  ProjectFolder: C:\Output
+  TargetCommand:
+    CommandLine: C:\Program Files\Git\cmd\git-gui.exe
+    WorkingFolder: ""
+  TargetOS:
+  - ""
+
+PreCaptureCommands: []
+
+CaptureSettings:
+  CaptureTimeoutSec: 30
+  CaptureAllProcesses: false
+  IgnoreChangesUnderInstallerPath: true
+  ReplaceRegistryShortPaths: true
+  FileExclusions:
+  - '%winDir%\Installer\*.msp'
+  - '%winDir%\Installer\*.msi'
+  - '%programdata%\Microsoft\NetFramework'
+  - '%programdata%\Microsoft\Windows Defender'
+  - '%userprofile%' # Includes <LocalAppData>, <LocalAppDataLow>, & <RoamingAppData>
+  - '%WinDir%' # covers <Windows>, <System>, and <SystemX86>
+  RegistryExclusions:
+  - HKEY_CURRENT_USER\SOFTWARE
+  - HKEY_LOCAL_MACHINE\SYSTEM
+  - HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\ServicesForNFS
+  - HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\SystemCertificates
+  - HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Wbem
+  - HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT
+  - HKEY_USERS\.DEFAULT
+  ProcessExclusions:
+  - C:\Windows\System32\svchost.exe
+  ProcessInclusions:
+    IncludeChildProccesses: false
+    Include: []
+
+InstallerDownload:
+  DownloadURL: ""
+  DownloadPath: ""
+  SHA-256: ""
+
+CaptureCommands:
+  Enabled: true
+  PrerequisiteDownload: {}
+  Prerequisites:
+    Enabled: false
+    Commands: []
+  InstallerPrefix: ""
+  InstallerPath: ""
+  Installer: Deploy-Application.exe # start-package specific
+  # InstallerFill: "" # functions the same as CommandLineFill - see GIMP for example
+  InstallerCommands: -DeployMode Silent
+  InstallerLogPath: 'C:\Windows\Logs\Software\*{0}*PSAppDeployToolkit*' # start-package specific
+  InstallerProcess: '' # start-package specific
+  PostInstallActions:
+    Enabled: false
+    Commands: []
+  DebugMode: false
+
+ModifyAssets:
+  AddFiles: {}
+  ModifyKeys: {}
+
+VirtualizationSettings:
+  DefaultDispositionLayer: 3
+  DefaultServiceVirtualizationAction: Register
+  FileDispositionLayers:
+    AppData:
+      Path: '%AppData%'
+      Layer: 2
+      Recurse: true
+  RegistryDispositionLayers: {}
+  SandboxFileExclusions: []
+  SandboxRegistryExclusions: []
+
+SecurityOverrideSettings:
+  AllowAccessLayer4:
+    AllowReadAndCopy: true
+    Proccesses: []
+  DenyAccessLayer3: []
+  
+OutputSettings:
+  EncryptionMethod: AES-256-Enhanced
+  CompressionMethod: LZMA
+  OutputFileNameNoExt: ""
+  FinalizeIntoSTP: false  
+  OutputFolder: C:\AP_Work
+  
+

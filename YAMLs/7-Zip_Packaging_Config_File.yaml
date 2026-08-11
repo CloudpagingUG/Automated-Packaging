@@ -1,0 +1,117 @@
+yamlConfigVersion: 3.1
+PackagingNotes:
+- ""
+
+## Non Cloudpaging Studio settings ##
+AppSettings:
+  AppName: 7-Zip
+  ProductionSTPRepository: ReplaceMe # The full path to the production STPs folder
+  InstallerDirectory: ReplaceMe # The full path to the folder containing production installers/packages
+  PkgStagingDirectory: ReplaceMe # The full path to the folder where in-progress files will be stored
+  STPBackupDirectory: ReplaceMe # The full path to the folder where completed STPs will be backed up
+  AppAdminWebpage: ReplaceMe #The link to edit the application
+
+PrefetchSettings:
+  LaunchCommands: 'PLAYER' # Cloudpaging Player Launch button
+  Launches: 2
+  RuntimeSeconds: 15
+  VirtualizationSeconds: 5
+
+RetentionSettings:
+  STPCount: 2
+  PackageCount: 3 
+  IssueUnmodifiedDays: 30
+## END Non Cloudpaging Studio settings ##
+
+ProjectSettings:
+  ProjectName: AP_7-Zip_{0}_64bit_x64_NLR_EN_Rel1
+  ProjectDescription: 7-Zip is a file archiver with a high compression ratio.
+  IconFile: ""
+  ProjectFileName: ""
+  ProjectFolder: C:\Output
+  TargetCommand:
+    CommandLine: C:\Program Files\7-Zip\7zFM.exe
+    WorkingFolder: ""
+  TargetOS:
+  - ""
+
+PreCaptureCommands:
+- wmic product where "name like '%%Zip%%'" call uninstall
+
+CaptureSettings:
+  CaptureTimeoutSec: 30
+  CaptureAllProcesses: false
+  IgnoreChangesUnderInstallerPath: true
+  ReplaceRegistryShortPaths: true
+  FileExclusions:
+  - '%userprofile%' # covers <userProfile>\<user>, <LocalAppData>, <RoamingAppData>
+  - '%programdata%\Microsoft\NetFramework' # Can't exclude all of ProgramData\Microsoft because start menu shortcuts live under that folder
+  - '%programdata%\Microsoft\Windows\wfp' # Can't exclude all of ProgramData\Microsoft\Windows for the same reason
+  - '%programdata%\Microsoft\Windows Defender'
+  - '%winDir%\Installer\*.msi'
+  RegistryExclusions:
+  - HKEY_CURRENT_USER
+  - HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\SystemCertificates
+  - HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Wbem
+  - HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT
+  - HKEY_LOCAL_MACHINE\SYSTEM
+  - HKEY_USERS
+  ProcessExclusions:
+  - C:\Windows\System32\svchost.exe
+  ProcessInclusions:
+    IncludeChildProccesses: false
+    Include: []
+
+InstallerDownload:
+  DownloadURL: ""
+  DownloadPath: ""
+  SHA-256: ""
+
+CaptureCommands:
+  Enabled: true
+  PrerequisiteDownload: {}
+  Prerequisites:
+    Enabled: false
+    Commands: []
+  InstallerPrefix: ""
+  InstallerPath: ""
+  Installer: Deploy-Application.exe # start-package specific
+  # InstallerFill: "" # functions the same as CommandLineFill - see GIMP for example
+  InstallerCommands: -DeployMode Silent
+  InstallerLogPath: 'C:\Windows\Logs\Software\*{0}*PSAppDeployToolkit*' # start-package specific
+  InstallerProcess: '' # start-package specific
+  PostInstallActions:
+    Enabled: false
+    Commands: []
+  DebugMode: false
+
+ModifyAssets:
+  AddFiles: {}
+  ModifyKeys: {}
+
+VirtualizationSettings:
+  DefaultDispositionLayer: 3
+  DefaultServiceVirtualizationAction: Register
+  FileDispositionLayers:
+    AppData:
+      Path: '%AppData%'
+      Layer: 2
+      Recurse: true
+  RegistryDispositionLayers: {}
+  SandboxFileExclusions: []
+  SandboxRegistryExclusions: []
+
+SecurityOverrideSettings:
+  AllowAccessLayer4:
+    AllowReadAndCopy: true
+    Proccesses: []
+  DenyAccessLayer3: []
+
+OutputSettings:
+  EncryptionMethod: AES-256-Enhanced
+  CompressionMethod: LZMA
+  OutputFileNameNoExt: ""
+  FinalizeIntoSTP: false
+  ComplexPrefetch: true
+  OutputFolder: C:\AP_Work
+
