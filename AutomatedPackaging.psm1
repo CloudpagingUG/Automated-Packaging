@@ -1,5 +1,129 @@
 <#
 .SYNOPSIS
+    A function to convert strings and cast them to type [version].
+.DESCRIPTION
+    To make strings castable as type [version], this function changes -'s or +'s to .'s and
+    converts letters to their character byte number. If more than 4 letters exist in the version
+    it assumes there is a word and removes all letters. Returns object with original string & the
+    converted/casted string that can be used for version comparison.
+.NOTES
+    Added for Automated Packaging of Cloudpaging packages 2026-Aug-14
+    For comparing non production version numbers
+.EXAMPLE
+    $path = '\\shareFQDN\Adobe\Acrobat Pro\Windows\Production\'
+    $productionVersions = (Get-ChildItem -Path $path -Directory).name
+    $productionVersionsForCompare = Convert-ForVersionCompare -Versions $productionVersions
+    $productionVersionsForCompare
+
+    Original           Version
+    --------           -------
+    20.5.30574-classic 20.5.30574
+    20.5.30636-classic 20.5.30636
+    24.2.20687         24.2.20687
+    24.2.20759         24.2.20759
+
+    $productionVersionsForCompare | Sort-Object -Property Version -Bottom 1
+    
+    Original   Version
+    --------   -------
+    24.2.20759 24.2.20759
+
+    In this example all the version folders under the Acrobat Pro Production folder are pulled. They
+    are then put through Convert-ForVersionCompare and a object containing the original strings
+    with the converted/casted version. The object can then be sorted by the Version property and
+    the highest version number is taken.
+
+    Since "20.5.30574-classic" & "20.5.30636-classic" contain more than 4 letters, "classic" is
+    stripped out instead of converting the letters to their character byte equivalent number.
+.EXAMPLE
+    $productionVersions = (Get-ChildItem -Path '\\shareFQDN\Eclipse\Windows\Production\' -Directory).name
+    Convert-ForVersionCompare $productionVersions
+
+    Original Version
+    -------- -------
+    2024-03  2024.3
+
+    In this example all the version folders under the Eclipse Production folder are pulled and fed
+    into Convert-ForVersionCompare. The only character keeps the string from being cast as a
+    version is converted, changing the '-' to '.'.
+.EXAMPLE
+    $productionVersions = (Get-ChildItem -Path '\\shareFQDN\Past\Windows\Production\' -Directory).name
+    Convert-ForVersionCompare $productionVersions
+
+    Original Version
+    -------- -------
+    4.16c    4.1699
+
+    In this example all the version folders under the Past Production folder are pulled and fed into
+    Convert-ForVersionCompare. The only character keeps the string from being cast as a version is
+    converted, changing the 'c' to '99'.
+#>
+function Convert-ForVersionCompare {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory=$false)]
+        [string[]]
+        $Versions
+    )
+    Write-Verbose "Running Convert-ForVersionCompare for:`n('$($Versions -join "', '")')"
+
+    $results = foreach ($version in $Versions){
+        if ($version -eq '') {
+            Write-Verbose "Version is empty."
+            Write-Output $null
+        }
+        else {
+            # find any characters that must be converted
+            $returnString = $version -replace '[-+]','.' # accounts for r-studio's strange version numbers
+            $lettersOnly = $returnString -replace '[^a-zA-Z]','' # Regex to match any non letter
+            Write-Verbose "Replacing each character of '$lettersOnly' in '$version'"
+        
+            if ($lettersOnly.Length -gt 4){
+                # There's probably a full word and converting that will likely be too large for [int32] to store
+                $returnString = $returnString -replace '[a-zA-Z]','' # Regex to match any letter
+            }
+            else{
+                # Just a few letters, converting should work fine
+                foreach($letter in $lettersOnly.ToCharArray() | Sort-Object -Unique){
+                    $returnString = $returnString -replace $letter,[byte][char]$letter # 4.16c -> 4.1699
+                    Write-Verbose "Replaced '$letter' with '$([byte][char]$letter)'"
+                }
+                # Just in case some version numbers do eventually get too large, I'll leave this here:
+                # $int32Max = ([math]::pow(2,32) / 2)-1
+                # if ($returnString.split('.') | Where-Object {[int64]$_ -gt $int32Max}){ # Won't cast as [version] }
+            }
+        
+            # Ensure the version doesn't end with '.'
+            if ($returnString[-1] -eq '.'){
+                $returnString = $returnString.Substring(0,$returnString.Length-1)
+            }
+            # Ensure the version has a minor version
+            if ($returnString.Split('.').Length -eq 1){
+                Write-Verbose "Adding minor version"
+                $returnString = "$returnString.0"
+            }
+        
+            try { # try casting as [version]
+                Write-Verbose "Casting '$returnString' as [version]"
+                $returnVersion = [version]$returnString
+            }
+            catch {
+                Write-Error "Error casting '$returnString' as [version]..."
+                Write-Error $_
+            }
+            [PSCustomObject]@{
+                Original = $Version
+                Version = $returnVersion
+            } | Write-Output
+        }
+    }
+
+    # Write-Verbose "Returning '$returnString'"
+    return $results
+}
+
+<#
+.SYNOPSIS
     For Copying to/from a network share to/from a local VM.
 .DESCRIPTION
     This function uses copy-item, attempts to do a direct copy first, but if that fails will 
@@ -260,7 +384,7 @@ function Get-ResetVMStatus {
     name                           win11_Player_s2
     provider                       hyperv
     state                          running
-    directory                      D:/VMs/AP/PlayerVM
+    directory                      D:/VMs/AAA/PlayerVM
 
 
     Name                           Value
@@ -269,7 +393,7 @@ function Get-ResetVMStatus {
     name                           win11_Packager_s2
     provider                       hyperv
     state                          running
-    directory                      D:/VMs/AP/PackagerVM
+    directory                      D:/VMs/AAA/PackagerVM
 
     In this example, the result from Get-VagrantVMs is stored in $vms then displayed to the console.
 #>
@@ -315,13 +439,13 @@ Vagrant commands from any directory. For example:
     For more information, see
     [about_FileSystem_Provider](../Microsoft.PowerShell.Core/About/about_FileSystem_Provider.md).
 .EXAMPLE
-    Initialize-Path -Path 'E:\VMs\AP\PackagerVM\' 
+    Initialize-Path -Path 'E:\VMs\AAA\PackagerVM\' 
 
-    Initialize-Path will check for 'E:\VMs\AP\Packager\' and create the path if it does not exist.
+    Initialize-Path will check for 'E:\VMs\AAA\Packager\' and create the path if it does not exist.
 .EXAMPLE
-    Initialize-Path -Path 'C:\AP_Work' -Session $packagerSession
+    Initialize-Path -Path 'C:\AAA_Work' -Session $packagerSession
 
-    Initialize-Path will check for 'C:\AP_Work' and create the path if it does not exist on the
+    Initialize-Path will check for 'C:\AAA_Work' and create the path if it does not exist on the
     Windows system specified in $packagerSession
 #>
 function Initialize-Path {
@@ -372,6 +496,95 @@ function Initialize-Path {
     else {
         & $scriptBlock $Path
     }
+}
+
+<#
+.SYNOPSIS
+    Initialize-VMSession initalizes session variables for Packager and Player VMs.
+.DESCRIPTION
+    Initialize-VMSession looks for existing PSSessions for VMs with the names specified via the
+    PackagerVMName and PlayerVMName parameters. If no credential object is passed in, it assumes
+    'vagrant' should be used as the username and password.
+.NOTES
+    Initially set up for Automated Packaging of Cloudpaging packages 2026-Aug-14
+.PARAMETER PackagerVMName
+    The VMName of the Packager VM 
+    Passed along to New-PSSession & Get-PSSession | from New-PSSession help:
+    Specifies an array of names of virtual machines. This cmdlet starts a PowerShell Direct interactive session
+    with each of the specified virtual machines. For more information, see Virtual Machine automation and
+    management using PowerShell (/virtualization/hyper-v-on-windows/user-guide/powershell-direct).
+
+    Use `Get-VM` to see the virtual machines that are available on your Hyper-V host.
+.PARAMETER PlayerVMName
+    The VMName of the Player VM 
+    Passed along to New-PSSession & Get-PSSession | from New-PSSession help:
+    Specifies an array of names of virtual machines. This cmdlet starts a PowerShell Direct interactive session
+    with each of the specified virtual machines. For more information, see Virtual Machine automation and
+    management using PowerShell (/virtualization/hyper-v-on-windows/user-guide/powershell-direct).
+
+    Use `Get-VM` to see the virtual machines that are available on your Hyper-V host.
+.PARAMETER Credential
+    Passed along to New-PSSession | from New-PSSession help:
+    Specifies a user account that has permission to do this action. The default is the current user.
+
+    Type a user name, such as `User01` or `Domain01\User01`, or enter a PSCredential object generated by the
+    `Get-Credential` cmdlet. If you type a user name, you're prompted to enter the password.
+
+    Credentials are stored in a PSCredential (/dotnet/api/system.management.automation.pscredential)object and the
+    password is stored as a SecureString (/dotnet/api/system.security.securestring).
+
+    > [!NOTE] > For more information about SecureString data protection, see > How secure is SecureString?
+    (/dotnet/api/system.security.securestring#how-secure-is-securestring).
+.EXAMPLE
+    Test-MyTestFunction -Verbose
+    Explanation of the function or its result. You can include multiple examples with additional .EXAMPLE lines
+#>
+function Initialize-VMSession {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true,ParameterSetName='Packager')]
+        [Parameter(Mandatory = $true,ParameterSetName='Both')]
+        [string]$PackagerVMName,
+        [Parameter(Mandatory = $true,ParameterSetName='Player')]
+        [Parameter(Mandatory = $true,ParameterSetName='Both')]
+        [string]$PlayerVMName,
+        [parameter(Mandatory = $false)]
+        [System.Management.Automation.PSCredential]$Credential
+    )
+
+    if ($null -eq $Credential) {
+        $vmSessionPassword = 'vagrant' | ConvertTo-SecureString -AsPlainText -Force
+        $Credential = [PSCredential]::New('vagrant',$vmSessionPassword)
+    }
+    
+    Write-Verbose 'Removing broken sessions...'
+    Get-PSSession | Where-Object {$_.State -eq 'Broken'} | Remove-PSSession
+
+    Write-Verbose "Setting up session variables"
+    if ('' -ne $PackagerVMName) {
+        $packagerSession = Get-PSSession -VMName $PackagerVMName | Where-Object {($_.State -ne 'Broken')}
+        if (-not $packagerSession) {
+            Write-Verbose "New session initialized for packager VM ($PackagerVMName)"
+            $packagerSession = New-PSSession -VMName $PackagerVMName -Credential $Credential
+        }
+        else { Write-Verbose "Using existing session for packager VM ($PackagerVMName)" }
+    }
+    else { $packagerSession = $null }
+
+    if ('' -ne $PlayerVMName) {
+        $playerSession = Get-PSSession -VMName $PlayerVMName | Where-Object {($_.State -ne 'Broken')}
+        if (-not $playerSession) {
+            Write-Verbose "New session initialized for player VM ($PlayerVMName)"
+            $playerSession = New-PSSession -VMName $PlayerVMName -Credential $Credential
+        }
+        else { Write-Verbose "Using existing session for player VM ($PlayerVMName)" }
+    }
+    else { $playerSession = $null }
+
+    [pscustomobject]@{
+        packager = $packagerSession
+        player = $playerSession
+    } | Write-Output
 }
 
 <#
@@ -499,7 +712,7 @@ function Invoke-CommandAsScheduledTask {
 
 <#
 .SYNOPSIS
-    Limit-PackageFolders cleans up excess _pkg and _pf folders that were made during AP runs.
+    Limit-PackageFolders cleans up excess _pkg and _pf folders that were made during AAA runs.
 .DESCRIPTION
     Limit-PackageFolders queries folders under the specified path, determines the amount of unique
     versions for which _pkg and/or _pf folders exist, then removes the lowest versions down to the
@@ -508,7 +721,7 @@ function Invoke-CommandAsScheduledTask {
     Initially set up for Automated Packaging of Cloudpaging packages 2026-Jul-02
 .PARAMETER Path
     Passed along to Get-ChildItem
-    Specifies the path to the folder where _pkg and _pf folders are created during AP runs.
+    Specifies the path to the folder where _pkg and _pf folders are created during AAA runs.
 .PARAMETER WhatIf
     Passed along to Remove-Item | from Remove-Item help:
     Shows what would happen if the cmdlet runs. The cmdlet is not run.
@@ -534,23 +747,23 @@ function Limit-PackageFolders {
         throw "`$Path ($Path) does not exist."
     }
     $allFolders = Get-ChildItem -Path $Path -Directory
-    $versions = $allFolders.Name | ForEach-Object {($_ -split '_')[0]} | Select-Object -Unique | Sort-Object @{Expression = {[version]$_}}
+    $versions = Convert-ForVersionCompare -Versions ($allFolders.Name | ForEach-Object {($_ -split '_')[0]} | Select-Object -Unique) | Sort-Object -Property Version
     Write-Verbose "Found ($($versions.count)) version folders under '$Path': ('$($allFolders.Name -join "', '")')"
     if ($versions.count -le $Count) {
         Write-Verbose "Path ($Path) does not exceed a count of '$Count' package folders per version."
         return
     }
-    $versionsToRemove = $versions | Select-Object -First ($versions.count - $Count)
+    $versionsToRemove = $versions.Original | Select-Object -First ($versions.count - $Count)
     foreach ($version in $versionsToRemove) {
         Write-Host "Removing package folders for version ($version)"
-        $allFolders | Where-Object {$_.name.StartsWith($version)} | Remove-Item -Recurse -Force -WhatIf:$WhatIf
+        $allFolders | Where-Object {$_.name.StartsWith($version)} | Select-Object -ExpandProperty FullName | Remove-Item -Recurse -Force -WhatIf:$WhatIf
     }
 }
 
 <#
 .SYNOPSIS
     Limit-STPBackupFolders cleans up excess version folders that were made and STPs were backed up to
-    during AP runs.
+    during AAA runs.
 .DESCRIPTION
     Limit-STPBackupFolders queries the version folders under the specified path then removes the lowest
     versions down to the number specified by Count.
@@ -559,7 +772,7 @@ function Limit-PackageFolders {
 .PARAMETER Path
     Passed along to Get-ChildItem
     Specifies the path to the folder where version folders are created and finished STPs are backed
-    up to during AP runs.
+    up to during AAA runs.
 .PARAMETER WhatIf
     Passed along to Remove-Item | from Remove-Item help:
     Shows what would happen if the cmdlet runs. The cmdlet is not run.
@@ -584,17 +797,18 @@ function Limit-STPBackupFolders {
     if ( -not (test-path -Path $Path -PathType Container) ) {
         throw "`$Path ($Path) does not exist."
     }
-    $folders = Get-ChildItem -Path $Path -Directory | Sort-Object @{Expression = {[version]$_.name}} | Select-Object -Property Name, fullname
+    $folders = Get-ChildItem -Path $Path -Directory | Select-Object -Property Name, fullname
+    $folderVersions = Convert-ForVersionCompare -Versions $folders.Name | Sort-Object -Property Version
     $foldersCount = ($folders | Measure-Object).Count
     Write-Verbose "Found ($foldersCount) folders under '$Path': ('$($folders.Name -join "', '")')"
     if ($foldersCount -le $Count) {
         Write-Verbose "Path ($Path) does not exceed a count of '$Count'."
         return
     }
-    $toRemove = $folders | Select-Object -First ($foldersCount - $Count) -ExpandProperty FullName
+    $toRemove = $folderVersions | Select-Object -First ($foldersCount - $Count) -ExpandProperty Original
     foreach ($item in $toRemove) {
         Write-Host "Removing '$item'"
-        Remove-Item -Path $item -Recurse -Force -WhatIf:$WhatIf
+        $folders | Where-Object {$_.Name -eq $item} | Select-Object -ExpandProperty FullName | Remove-Item -Recurse -Force -WhatIf:$WhatIf
     }
 }
 
@@ -614,16 +828,12 @@ function Limit-STPBackupFolders {
     Specifies the path to the folder where the packager VM's vagrantfile resides.
 .PARAMETER PlayerVMFolder
     Specifies the path to the folder where the player VM's vagrantfile resides.
-.PARAMETER PackagerOnly
-    Indicates that this function should only reset the packager VM
-.PARAMETER PlayerOnly
-    Indicates that this function should only reset the player VM
 .EXAMPLE
-    Reset-VMEnvironment -PackagerVMFolder D:\VMs\AP\PackagerVM\ -PackagerOnly -Force
+    Reset-VMEnvironment -PackagerVMFolder D:\VMs\AAA\PackagerVM\ -Force
 
     In this example, the packager VM will be destroyed before starting it up fresh
 .EXAMPLE
-    Reset-VMEnvironment -PlayerVMFolder D:\VMs\AP\PlayerVM\ -PlayerOnly
+    Reset-VMEnvironment -PlayerVMFolder D:\VMs\AAA\PlayerVM\
 
     In this example, the player VM will be started if it's not loaded or it will revert to it's
     snapshot and then resume if it is loaded.
@@ -631,36 +841,39 @@ function Limit-STPBackupFolders {
 function Reset-VMEnvironment {
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory = $false)]
+        [Parameter(Mandatory = $true,ParameterSetName='Packager')]
+        [Parameter(Mandatory = $true,ParameterSetName='Both')]
         [string]$PackagerVMFolder,
-        [Parameter(Mandatory = $false)]
+        [Parameter(Mandatory = $true,ParameterSetName='Player')]
+        [Parameter(Mandatory = $true,ParameterSetName='Both')]
         [string]$PlayerVMFolder,
-        [switch]$Force,
-        [switch]$PackagerOnly,
-        [switch]$playerOnly
+        [Alias('Destroy')]
+        [switch]$Force
+        # [switch]$PackagerOnly,
+        # [switch]$playerOnly
     )
 
-    $ignoreText = @'
-Timed out while waiting for the machine to boot. This means that
-Vagrant was unable to communicate with the guest machine within
-the configured ("config.vm.boot_timeout" value) time period.
+#     $ignoreText = @'
+# Timed out while waiting for the machine to boot. This means that
+# Vagrant was unable to communicate with the guest machine within
+# the configured ("config.vm.boot_timeout" value) time period.
 
-If you look above, you should be able to see the error(s) that
-Vagrant had when attempting to connect to the machine. These errors
-are usually good hints as to what may be wrong.
+# If you look above, you should be able to see the error(s) that
+# Vagrant had when attempting to connect to the machine. These errors
+# are usually good hints as to what may be wrong.
 
-If you're using a custom box, make sure that networking is properly
-working and you're able to connect to the machine. It is a common
-problem that networking isn't setup properly in these boxes.
-Verify that authentication configurations are also setup properly,
-as well.
+# If you're using a custom box, make sure that networking is properly
+# working and you're able to connect to the machine. It is a common
+# problem that networking isn't setup properly in these boxes.
+# Verify that authentication configurations are also setup properly,
+# as well.
 
-If the box appears to be booting properly, you may want to increase
-the timeout ("config.vm.boot_timeout") value.
-'@
+# If the box appears to be booting properly, you may want to increase
+# the timeout ("config.vm.boot_timeout") value.
+# '@
 
-    if (-not $playerOnly) {
-        if ('' -eq $PackagerVMFolder){ throw "PackagerVMFolder not specified!" }
+    if ('' -ne $PackagerVMFolder) {
+        if (-not (Test-Path -Path $PackagerVMFolder)){ throw "Path to PackagerVMFolder ($PackagerVMFolder) not valid!" }
 
         Write-Verbose "Setting up Packager VM"
         Push-Location -Path $PackagerVMFolder
@@ -684,16 +897,25 @@ the timeout ("config.vm.boot_timeout") value.
         }
         else {
             Write-Verbose "VM id for Packager ($packagerID)"
-            Write-Verbose "Starting Packager VM from snapshot"
-            vagrant snapshot pop --no-delete $packagerID 2>&1 | Where-Object {!($ignoreText.contains($_))}
-            vagrant resume $packagerID 2>&1 | Where-Object {!($ignoreText.contains($_))}
+            if (Get-VMSnapshot -VMName 'AAA_Packager' -Name 'push*') {
+                Write-Verbose "Starting Packager VM from snapshot"
+                Restore-VMSnapshot -VMName 'AAA_Packager' -Name 'push*' -Confirm:$false
+            }
+            else {
+                Write-Verbose "No Packager vm snapshot, re-running set up..."
+                vagrant destroy -f
+                vagrant box update
+                vagrant box prune
+                vagrant up
+                vagrant snapshot push
+            }
         }
         if (Test-Path -Path '.\ResetVM.txt') { Remove-Item -Path '.\ResetVM.txt' -Force }
         Pop-Location
         Write-Verbose "location set to '$((Get-Location).Path)'"
     }
-    if (-not $PackagerOnly) {
-        if ('' -eq $PlayerVMFolder){ throw "PackagerVMFolder not specified!" }
+    if ('' -ne $PlayerVMFolder) {
+        if (-not (Test-Path -Path $PlayerVMFolder)){ throw "Path to PlayerVMFolder ($PlayerVMFolder) not valid!" }
 
         Write-Verbose "Setting up Player VM"
         Push-Location -Path $PlayerVMFolder
@@ -717,9 +939,18 @@ the timeout ("config.vm.boot_timeout") value.
         }
         else {
             Write-Verbose "VM id for Player ($PlayerID)"
-            Write-Verbose "Starting Player VM from snapshot"
-            vagrant snapshot pop --no-delete $PlayerID 2>&1 | Where-Object {!($ignoreText.contains($_))}
-            vagrant resume $PlayerID 2>&1 | Where-Object {!($ignoreText.contains($_))}
+            if (Get-VMSnapshot -VMName 'AAA_Player' -Name 'push*') {
+                Write-Verbose "Starting Player VM from snapshot"
+                Restore-VMSnapshot -VMName 'AAA_Player' -Name 'push*' -Confirm:$false
+            }
+            else {
+                Write-Verbose "No Player vm snapshot, re-running set up..."
+                vagrant destroy -f
+                vagrant box update
+                vagrant box prune
+                vagrant up
+                vagrant snapshot push
+            }
         }
         if (Test-Path -Path '.\ResetVM.txt') { Remove-Item -Path '.\ResetVM.txt' -Force }
         Pop-Location
@@ -1143,11 +1374,13 @@ function Wait-ForProcessWithLogging {
 }
 
 Export-ModuleMember -Function @(
+    'Convert-ForVersionCompare',
     'Copy-ItemWithFallback',
     'Get-CloudpagingServerData',
     'Get-ResetVMStatus',
     'Get-VagrantVMs',
     'Initialize-Path',
+    'Initialize-VMSession',
     'Invoke-CommandAsScheduledTask',
     'Limit-PackageFolders',
     'Limit-STPBackupFolders',
