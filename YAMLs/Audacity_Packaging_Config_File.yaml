@@ -1,4 +1,4 @@
-yamlConfigVersion: 3.1
+yamlConfigVersion: 3.2
 PackagingNotes:
 - ''
 
@@ -30,7 +30,7 @@ ProjectSettings:
   ProjectFileName: ""
   ProjectFolder: C:\Output
   TargetCommand:
-    CommandLine: C:\Program Files\Audacity\Audacity.exe 
+    CommandLine: C:\Program Files\Audacity 4\bin\Audacity4.exe 
     WorkingFolder: ""
   TargetOS:
   - ""
@@ -38,18 +38,32 @@ ProjectSettings:
 PreCaptureCommands: []
 
 CaptureSettings:
-  CaptureTimeoutSec: 30
+  CaptureTimeoutSec: 300
   CaptureAllProcesses: false
   IgnoreChangesUnderInstallerPath: true
   ReplaceRegistryShortPaths: true
   FileExclusions:
   - '%userprofile%' # covers <userProfile>\<user>, <LocalAppData>, <RoamingAppData>
-  - '%programdata%\Microsoft\Windows Defender' # Can't exclude all of ProgramData\Microsoft because start menu shortcuts live under that folder
+  - '%programdata%\Microsoft\EdgeUpdate' # Can't exclude all of ProgramData\Microsoft because start menu shortcuts live under that folder
+  - '%programdata%\Microsoft\NetFramework' 
+  - '%programdata%\Microsoft\Windows\wfp' # Can't exclude all of ProgramData\Microsoft\Windows for the same reason
+  - '%programdata%\Microsoft\Windows Defender'
+  - '%programdata%\Microsoft\Windows Security Health'
+  - '%programdata%\USOShared'
+  - '%winDir%\Installer\*.msp'
+  - '%winDir%\Installer\*.msi'
+  - '%winDir%\Microsoft.NET'
+  - '%winDir%\ServiceProfiles'
+  - '%winDir%\SystemTemp'
   RegistryExclusions:
   - HKEY_CURRENT_USER
+  - HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Internet Explorer
+  - HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\EnterpriseCertificates
+  - HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\SystemCertificates
   - HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Wbem
   - HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT
-  - HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node
+  - HKEY_LOCAL_MACHINE\SOFTWARE\Policies
+  - HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Explorer
   - HKEY_LOCAL_MACHINE\SYSTEM
   - HKEY_USERS
   ProcessExclusions:
@@ -58,6 +72,105 @@ CaptureSettings:
     IncludeChildProccesses: false
     Include: []
 
+## App Events section ##
+PostCaptureSettings:
+  ConfigurableAppEvents:
+    AfterRegistration:
+      Path: 'AppEvents\Audacity_After-Registration_AddFirewallRules.ps1'
+      HandlerCommandLine:
+        Parameters: ''
+        UseLocalApplication: FALSE
+      HandlerLaunching:
+        RunElevated: FALSE
+        RunAsLocalSystem: TRUE
+      AfterLaunching:
+        WaitForExit: TRUE
+        Timeout: 1
+        TimeoutUnit: 'MINUTES' # 'MINUTES' | 'SECONDS'
+        SuccessCodes: '0'
+    # AfterActivation:
+    #   Path: ''
+    #   HandlerCommandLine:
+    #     Parameters: ''
+    #     UseLocalApplication: FALSE
+    #   HandlerLaunching:
+    #     RunElevated: FALSE
+    #     RunAsLocalSystem: FALSE
+    #   AfterLaunching:
+    #     WaitForExit: TRUE
+    #     Timeout: 1
+    #     TimeoutUnit: 'MINUTES' # 'MINUTES' | 'SECONDS'
+    #     SuccessCodes: '0'
+    # AfterVirtualization:
+    #   Path: ''
+    #   Frequency: 'EveryTime' # 'FirstTime' | 'EveryTime'
+    #   HandlerCommandLine:
+    #     Parameters: ''
+    #     UseLocalApplication: FALSE
+    #   HandlerLaunching:
+    #     RunVirtualized: TRUE
+    #     RunElevated: FALSE     # Mutially exclusive with RunAsLocalSystem
+    #     RunAsLocalSystem: FALSE # Mutially exclusive with RunElevated
+    #   AfterLaunching:
+    #     WaitForExit: TRUE
+    #     Timeout: 1
+    #     TimeoutUnit: 'MINUTES' # 'MINUTES' | 'SECONDS'
+    #     SuccessCodes: '0'
+    # AfterLaunch:
+    #   Path: ''
+    #   Frequency: 'EveryTime' # 'FirstTime' | 'EveryTime'
+    #   HandlerCommandLine:
+    #     Parameters: ''
+    #     UseLocalApplication: FALSE
+    #   HandlerLaunching:
+    #     RunVirtualized: TRUE
+    #     RunElevated: FALSE     # Mutially exclusive with RunAsLocalSystem
+    #     RunAsLocalSystem: FALSE # Mutially exclusive with RunElevated
+    # AfterExit:
+    #   Path: ''
+    #   Frequency: 'EveryTime' # 'FirstTime' | 'EveryTime'
+    #   HandlerCommandLine:
+    #     Parameters: ''
+    #     UseLocalApplication: FALSE
+    #   HandlerLaunching:
+    #     RunVirtualized: TRUE
+    #     RunElevated: FALSE     # Mutially exclusive with RunAsLocalSystem
+    #     RunAsLocalSystem: FALSE # Mutially exclusive with RunElevated
+    #   AfterLaunching:
+    #     WaitForExit: TRUE
+    #     Timeout: 1
+    #     TimeoutUnit: 'MINUTES' # 'MINUTES' | 'SECONDS'
+    #     SuccessCodes: '0'
+    BeforeDevirtualization:
+      Path: 'AppEvents\Audacity_After-Registration_RemoveFirewallRules.ps1'
+      Frequency: 'FirstTime' # 'FirstTime' | 'EveryTime'
+      HandlerCommandLine:
+        Parameters: ''
+        UseLocalApplication: FALSE
+      HandlerLaunching:
+        RunVirtualized: FALSE
+        RunElevated: FALSE     # Mutially exclusive with RunAsLocalSystem
+        RunAsLocalSystem: TRUE # Mutially exclusive with RunElevated
+      AfterLaunching:
+        WaitForExit: TRUE
+        Timeout: 1
+        TimeoutUnit: 'MINUTES' # 'MINUTES' | 'SECONDS'
+        SuccessCodes: '0'
+    # BeforeDeactivation:
+    #   Path: ''
+    #   HandlerCommandLine:
+    #     Parameters: ''
+    #     UseLocalApplication: FALSE
+    #   HandlerLaunching:
+    #     RunElevated: FALSE     # Mutially exclusive with RunAsLocalSystem
+    #     RunAsLocalSystem: FALSE # Mutially exclusive with RunElevated
+    #   AfterLaunching:
+    #     WaitForExit: TRUE
+    #     Timeout: 1
+    #     TimeoutUnit: 'MINUTES' # 'MINUTES' | 'SECONDS'
+    #     SuccessCodes: '0'
+    ## END App Events section ##
+
 InstallerDownload:
   DownloadURL: ""
   DownloadPath: ""
@@ -65,16 +178,21 @@ InstallerDownload:
 
 CaptureCommands:
   Enabled: true
-  PrerequisiteDownload: {}
-  Prerequisites:
-    Enabled: false
-    Commands: []
+  # PrerequisiteDownload: {}
+  # Prerequisites:
+  #   DispositionLayer: 4 
+  #   Installer: Deploy-Application.exe
+  #   InstallerArgs: -DeployMode Silent
+  #   InstallerLogPath: 'C:\Windows\Logs\Software\*{0}*PSAppDeployToolkit*'
+  #   InstallerProcess: ''
+  #   Path: '\\multidrive.mtu.edu\multidrive\install\installers\Microsoft\Desktop Runtime\8\Windows\Standard'
+  #   Version: latest # specific | latest
   InstallerPrefix: ""
   InstallerPath: ""
-  Installer: Deploy-Application.exe # start-package specific
+  Installer: audacity-win-{0}-x86_64.msi # start-package specific
   # InstallerFill: "" # functions the same as CommandLineFill - see GIMP for example
-  InstallerCommands: -DeployMode Silent
-  InstallerLogPath: 'C:\Windows\Logs\Software\*{0}*PSAppDeployToolkit*' # start-package specific
+  InstallerCommands: /QN
+  InstallerLogPath: '' # start-package specific
   InstallerProcess: '' # start-package specific
   PostInstallActions:
     Enabled: false
