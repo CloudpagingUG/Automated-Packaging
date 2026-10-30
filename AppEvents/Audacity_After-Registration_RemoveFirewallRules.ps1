@@ -1,0 +1,1 @@
+Remove-NetFirewallRule -DisplayName "Audacity 4"

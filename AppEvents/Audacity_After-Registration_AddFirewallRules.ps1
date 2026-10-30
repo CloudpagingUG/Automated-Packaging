@@ -1,0 +1,1 @@
+New-NetFirewallRule -DisplayName "Audacity 4" -Direction Inbound -Action Allow -Program "C:\Program Files\Audacity 4\bin\Audacity4.exe" -Enabled True
