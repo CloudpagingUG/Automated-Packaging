@@ -1,8 +1,8 @@
 param(
     [parameter(Mandatory=$true)]
     [string]$APIToken,
-    [ValidateSet('#test-channel','#prod-channel')]
-    [string]$Channel = "#test-channel",
+    [ValidateSet('#<TEST_CHANNEL_NAME>','#<PROD_CHANNEL_NAME>')]
+    [string]$Channel = "#<TEST_CHANNEL_NAME>", #<TEST_CHANNEL_NAME>
     [string]$Title,
     [parameter(Mandatory=$true, ParameterSetName = 'Text-Only')]
     [parameter(Mandatory=$false, ParameterSetName = 'File')]
@@ -14,10 +14,10 @@ param(
     [string]$FilePath
 )
 switch ($Channel) {
-    '#prod-channel' { $ChannelID = "<prod channel ID>" }
-    '#test-channel' { $ChannelID = "<test channel ID>" }
+    '#<PROD_CHANNEL_NAME>' { $ChannelID = "<PROD_CHANNEL_ID>" }
+    '#<TEST_CHANNEL_NAME>' { $ChannelID = "<TEST_CHANNEL_ID>" }
     Default {
-        $ChannelID = "<test channel ID>"
+        $ChannelID = "<TEST_CHANNEL_ID>"
     }
 }
 if ($PSCmdlet.ParameterSetName -eq 'File') {
