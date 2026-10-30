@@ -443,9 +443,9 @@ Vagrant commands from any directory. For example:
 
     Initialize-Path will check for 'E:\VMs\AAA\Packager\' and create the path if it does not exist.
 .EXAMPLE
-    Initialize-Path -Path 'C:\AAA_Work' -Session $packagerSession
+    Initialize-Path -Path 'C:\AP_Work' -Session $packagerSession
 
-    Initialize-Path will check for 'C:\AAA_Work' and create the path if it does not exist on the
+    Initialize-Path will check for 'C:\AP_Work' and create the path if it does not exist on the
     Windows system specified in $packagerSession
 #>
 function Initialize-Path {
@@ -897,9 +897,9 @@ function Reset-VMEnvironment {
         }
         else {
             Write-Verbose "VM id for Packager ($packagerID)"
-            if (Get-VMSnapshot -VMName 'AAA_Packager' -Name 'push*') {
+            if (Get-VMSnapshot -VMName 'AP_Packager' -Name 'push*') {
                 Write-Verbose "Starting Packager VM from snapshot"
-                Restore-VMSnapshot -VMName 'AAA_Packager' -Name 'push*' -Confirm:$false
+                Restore-VMSnapshot -VMName 'AP_Packager' -Name 'push*' -Confirm:$false
             }
             else {
                 Write-Verbose "No Packager vm snapshot, re-running set up..."
@@ -939,9 +939,9 @@ function Reset-VMEnvironment {
         }
         else {
             Write-Verbose "VM id for Player ($PlayerID)"
-            if (Get-VMSnapshot -VMName 'AAA_Player' -Name 'push*') {
+            if (Get-VMSnapshot -VMName 'AP_Player' -Name 'push*') {
                 Write-Verbose "Starting Player VM from snapshot"
-                Restore-VMSnapshot -VMName 'AAA_Player' -Name 'push*' -Confirm:$false
+                Restore-VMSnapshot -VMName 'AP_Player' -Name 'push*' -Confirm:$false
             }
             else {
                 Write-Verbose "No Player vm snapshot, re-running set up..."
