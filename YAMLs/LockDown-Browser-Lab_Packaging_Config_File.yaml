@@ -1,0 +1,222 @@
+yamlConfigVersion: 3.2
+PackagingNotes:
+- ''
+
+AppSettings:
+  AppName: Lockdown Browser Lab
+  ProductionSTPRepository: ReplaceMe # The full path to the production STPs folder
+  InstallerDirectory: ReplaceMe # The full path to the folder containing production installers/packages
+  PkgStagingDirectory: ReplaceMe # The full path to the folder where in-progress files will be stored
+  STPBackupDirectory: ReplaceMe # The full path to the folder where completed STPs will be backed up
+  AppAdminWebpage: ReplaceMe #The link to edit the application
+
+## BEGIN Non Cloudpaging Studio settings ##
+PrefetchSettings:
+  LaunchCommands: 'PLAYER' # Cloudpaging Player Launch button
+  Launches: 2
+  RuntimeSeconds: 15
+  VirtualizationSeconds: 5
+
+RetentionSettings:
+  STPCount: 2
+  PackageCount: 3 
+  IssueUnmodifiedDays: 30
+## END Non Cloudpaging Studio settings ##
+
+
+ProjectSettings:
+  ProjectName: AP_Lockdown-Browser-(Lab)_{0}_64bit_x64_NLR_EN_Rel1
+  ProjectDescription: "Respondus LockDown Browser is a custom browser that locks down the testing environment within Blackboard, ANGEL, Desire2Learn, Canvas, Moodle, and Sakai. When students use Respondus LockDown Browser they are unable to print, copy, go to another URL, or access other applications. When an assessment is started, students are locked into it until they submit it for grading."
+  IconFile: ""
+  ProjectFileName: ""
+  ProjectFolder: C:\Output
+  TargetCommand:
+    CommandLine: C:\Program Files\Respondus\LockDown Browser Lab\LockDownBrowserLab.exe
+    CommandLineFill: "" # If you want to override the default fill of the current version, you can put a command in here. See GIMP for an example
+    WorkingFolder: ""
+  TargetOS:
+  - ""
+
+PreCaptureCommands: []
+
+CaptureSettings:
+  CaptureTimeoutSec: 120 # Increase this value if capturing isn't fully completing
+  CaptureAllProcesses: false
+  IgnoreChangesUnderInstallerPath: true
+  ReplaceRegistryShortPaths: true
+  RegistryExclusions: # Add registry paths to this location
+  - HKEY_LOCAL_MACHINE\SYSTEM
+  - HKEY_LOCAL_MACHINE\SOFTWARE\SystemCertificates
+  - HKEY_LOCAL_MACHINE\SOFTWARE\Wbem
+  - HKEY_LOCAL_MACHINE\SOFTWARE\Windows\CurrentVersion\Explorer
+  - HKEY_LOCAL_MACHINE\SOFTWARE\Policies
+  - HKEY_USERS\.DEFAULT
+  - HKEY_CURRENT_USER\SOFTWARE
+  FileExclusions: # Add file paths here. Examples of wildcards and environment variables shown in sections here
+  - '%winDir%\Installer\*.msp'
+  - '%winDir%\Installer\*.msi'
+  - '%USERPROFILE%\AppData\LocalLow'
+  - 'C:\ProgramData\regid*'
+  - 'C:\Windows\Microsoft.NET\Framework64'
+  - 'C:\Windows\SystemTemp'
+  ProcessExclusions:
+  - C:\Windows\System32\svchost.exe
+  ProcessInclusions:
+    IncludeChildProccesses: false
+    Include: []
+
+## START App Events section ##
+# PostCaptureSettings:
+#   ConfigurableAppEvents:
+#     AfterRegistration:
+#       Path: ''
+#       HandlerCommandLine:
+#         Parameters: ''
+#         UseLocalApplication: FALSE
+#       HandlerLaunching:
+#         RunElevated: FALSE
+#         RunAsLocalSystem: TRUE
+#       AfterLaunching:
+#         WaitForExit: TRUE
+#         Timeout: 1
+#         TimeoutUnit: 'MINUTES' # 'MINUTES' | 'SECONDS'
+#         SuccessCodes: '0'
+#     AfterActivation:
+#       Path: ''
+#       HandlerCommandLine:
+#         Parameters: ''
+#         UseLocalApplication: FALSE
+#       HandlerLaunching:
+#         RunElevated: FALSE
+#         RunAsLocalSystem: FALSE
+#       AfterLaunching:
+#         WaitForExit: TRUE
+#         Timeout: 1
+#         TimeoutUnit: 'MINUTES' # 'MINUTES' | 'SECONDS'
+#         SuccessCodes: '0'
+#     AfterVirtualization:
+#       Path: ''
+#       Frequency: 'EveryTime' # 'FirstTime' | 'EveryTime'
+#       HandlerCommandLine:
+#         Parameters: ''
+#         UseLocalApplication: FALSE
+#       HandlerLaunching:
+#         RunVirtualized: TRUE
+#         RunElevated: FALSE      # Mutially exclusive with RunAsLocalSystem
+#         RunAsLocalSystem: FALSE # Mutially exclusive with RunElevated
+#       AfterLaunching:
+#         WaitForExit: TRUE
+#         Timeout: 1
+#         TimeoutUnit: 'MINUTES' # 'MINUTES' | 'SECONDS'
+#         SuccessCodes: '0'
+#     AfterLaunch:
+#       Path: ''
+#       Frequency: 'EveryTime' # 'FirstTime' | 'EveryTime'
+#       HandlerCommandLine:
+#         Parameters: ''
+#         UseLocalApplication: FALSE
+#       HandlerLaunching:
+#         RunVirtualized: TRUE
+#         RunElevated: FALSE      # Mutially exclusive with RunAsLocalSystem
+#         RunAsLocalSystem: FALSE # Mutially exclusive with RunElevated
+#     AfterExit:
+#       Path: ''
+#       Frequency: 'EveryTime' # 'FirstTime' | 'EveryTime'
+#       HandlerCommandLine:
+#         Parameters: ''
+#         UseLocalApplication: FALSE
+#       HandlerLaunching:
+#         RunVirtualized: TRUE
+#         RunElevated: FALSE      # Mutially exclusive with RunAsLocalSystem
+#         RunAsLocalSystem: FALSE # Mutially exclusive with RunElevated
+#       AfterLaunching:
+#         WaitForExit: TRUE
+#         Timeout: 1
+#         TimeoutUnit: 'MINUTES' # 'MINUTES' | 'SECONDS'
+#         SuccessCodes: '0'
+#     BeforeDevirtualization:
+#       Path: ''
+#       Frequency: 'EveryTime' # 'FirstTime' | 'EveryTime'
+#       HandlerCommandLine:
+#         Parameters: ''
+#         UseLocalApplication: FALSE
+#       HandlerLaunching:
+#         RunVirtualized: TRUE
+#         RunElevated: FALSE      # Mutially exclusive with RunAsLocalSystem
+#         RunAsLocalSystem: FALSE # Mutially exclusive with RunElevated
+#       AfterLaunching:
+#         WaitForExit: TRUE
+#         Timeout: 1
+#         TimeoutUnit: 'MINUTES' # 'MINUTES' | 'SECONDS'
+#         SuccessCodes: '0'
+#     BeforeDeactivation:
+#       Path: ''
+#       HandlerCommandLine:
+#         Parameters: ''
+#         UseLocalApplication: FALSE
+#       HandlerLaunching:
+#         RunElevated: FALSE      # Mutially exclusive with RunAsLocalSystem
+#         RunAsLocalSystem: FALSE # Mutially exclusive with RunElevated
+#       AfterLaunching:
+#         WaitForExit: TRUE
+#         Timeout: 1
+#         TimeoutUnit: 'MINUTES' # 'MINUTES' | 'SECONDS'
+#         SuccessCodes: '0'
+## END App Events section ##
+
+InstallerDownload:
+  DownloadURL: ""
+  DownloadPath: ""
+  SHA-256: ""
+
+CaptureCommands:
+  Enabled: true
+  # PrerequisiteDownload: {}
+  # Prerequisites:
+  #   DispositionLayer: 4 
+  #   Installer: Deploy-Application.exe
+  #   InstallerArgs: -DeployMode Silent
+  #   InstallerLogPath: 'C:\Windows\Logs\Software\*{0}*PSAppDeployToolkit*'
+  #   InstallerProcess: ''
+  #   Path: '\\multidrive.mtu.edu\multidrive\install\installers\Microsoft\Desktop Runtime\8\Windows\Standard'
+  #   Version: latest # specific | latest
+  InstallerPrefix: ""
+  InstallerPath: ""
+  Installer: LDB-lab-v{0}-you-must-read-readme.msi
+  InstallerFill: $($currentVersion.Replace('.','')) # functions the same as CommandLineFill - see GIMP for example
+  InstallerCommands: /qn RSP_ID=<YOUR_RSP_ID> RSP_KEY=<YOUR_RSP_KEY> # REPLACE <YOUR_RSP_ID> and <YOUR_RSP_KEY>
+  InstallerLogPath: '' # start-package specific
+  InstallerProcess: '' # start-package specific
+  PostInstallActions:
+    Enabled: false
+    Commands: []
+  DebugMode: false
+
+ModifyAssets:
+  AddFiles: {}
+  ModifyKeys: {}
+
+VirtualizationSettings:
+  DefaultDispositionLayer: 3
+  DefaultServiceVirtualizationAction: Register
+  FileDispositionLayers:
+    AppData:
+      Path: '%AppData%'
+      Layer: 2
+      Recurse: true
+  RegistryDispositionLayers: {}
+  SandboxFileExclusions: []
+  SandboxRegistryExclusions: []
+
+SecurityOverrideSettings:
+  AllowAccessLayer4:
+    AllowReadAndCopy: true
+    Proccesses: []
+  DenyAccessLayer3: []
+
+OutputSettings:
+  EncryptionMethod: AES-256-Enhanced
+  CompressionMethod: LZMA
+  OutputFileNameNoExt: ""
+  FinalizeIntoSTP: false # {true | false} true if the app should NOT be prefetched and false if the app SHOULD be prefetched
+  OutputFolder: C:\AP_Work
