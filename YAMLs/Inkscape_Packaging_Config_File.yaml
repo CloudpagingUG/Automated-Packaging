@@ -1,4 +1,4 @@
-yamlConfigVersion: 3.1
+yamlConfigVersion: 3.2
 PackagingNotes:
 - ''
 
@@ -76,6 +76,105 @@ CaptureSettings:
     IncludeChildProccesses: false
     Include: []
 
+## START App Events section ##
+# PostCaptureSettings:
+#   ConfigurableAppEvents:
+#     AfterRegistration:
+#       Path: ''
+#       HandlerCommandLine:
+#         Parameters: ''
+#         UseLocalApplication: FALSE
+#       HandlerLaunching:
+#         RunElevated: FALSE
+#         RunAsLocalSystem: TRUE
+#       AfterLaunching:
+#         WaitForExit: TRUE
+#         Timeout: 1
+#         TimeoutUnit: 'MINUTES' # 'MINUTES' | 'SECONDS'
+#         SuccessCodes: '0'
+#     AfterActivation:
+#       Path: ''
+#       HandlerCommandLine:
+#         Parameters: ''
+#         UseLocalApplication: FALSE
+#       HandlerLaunching:
+#         RunElevated: FALSE
+#         RunAsLocalSystem: FALSE
+#       AfterLaunching:
+#         WaitForExit: TRUE
+#         Timeout: 1
+#         TimeoutUnit: 'MINUTES' # 'MINUTES' | 'SECONDS'
+#         SuccessCodes: '0'
+#     AfterVirtualization:
+#       Path: ''
+#       Frequency: 'EveryTime' # 'FirstTime' | 'EveryTime'
+#       HandlerCommandLine:
+#         Parameters: ''
+#         UseLocalApplication: FALSE
+#       HandlerLaunching:
+#         RunVirtualized: TRUE
+#         RunElevated: FALSE      # Mutially exclusive with RunAsLocalSystem
+#         RunAsLocalSystem: FALSE # Mutially exclusive with RunElevated
+#       AfterLaunching:
+#         WaitForExit: TRUE
+#         Timeout: 1
+#         TimeoutUnit: 'MINUTES' # 'MINUTES' | 'SECONDS'
+#         SuccessCodes: '0'
+#     AfterLaunch:
+#       Path: ''
+#       Frequency: 'EveryTime' # 'FirstTime' | 'EveryTime'
+#       HandlerCommandLine:
+#         Parameters: ''
+#         UseLocalApplication: FALSE
+#       HandlerLaunching:
+#         RunVirtualized: TRUE
+#         RunElevated: FALSE      # Mutially exclusive with RunAsLocalSystem
+#         RunAsLocalSystem: FALSE # Mutially exclusive with RunElevated
+#     AfterExit:
+#       Path: ''
+#       Frequency: 'EveryTime' # 'FirstTime' | 'EveryTime'
+#       HandlerCommandLine:
+#         Parameters: ''
+#         UseLocalApplication: FALSE
+#       HandlerLaunching:
+#         RunVirtualized: TRUE
+#         RunElevated: FALSE      # Mutially exclusive with RunAsLocalSystem
+#         RunAsLocalSystem: FALSE # Mutially exclusive with RunElevated
+#       AfterLaunching:
+#         WaitForExit: TRUE
+#         Timeout: 1
+#         TimeoutUnit: 'MINUTES' # 'MINUTES' | 'SECONDS'
+#         SuccessCodes: '0'
+#     BeforeDevirtualization:
+#       Path: ''
+#       Frequency: 'EveryTime' # 'FirstTime' | 'EveryTime'
+#       HandlerCommandLine:
+#         Parameters: ''
+#         UseLocalApplication: FALSE
+#       HandlerLaunching:
+#         RunVirtualized: TRUE
+#         RunElevated: FALSE      # Mutially exclusive with RunAsLocalSystem
+#         RunAsLocalSystem: FALSE # Mutially exclusive with RunElevated
+#       AfterLaunching:
+#         WaitForExit: TRUE
+#         Timeout: 1
+#         TimeoutUnit: 'MINUTES' # 'MINUTES' | 'SECONDS'
+#         SuccessCodes: '0'
+#     BeforeDeactivation:
+#       Path: ''
+#       HandlerCommandLine:
+#         Parameters: ''
+#         UseLocalApplication: FALSE
+#       HandlerLaunching:
+#         RunElevated: FALSE      # Mutially exclusive with RunAsLocalSystem
+#         RunAsLocalSystem: FALSE # Mutially exclusive with RunElevated
+#       AfterLaunching:
+#         WaitForExit: TRUE
+#         Timeout: 1
+#         TimeoutUnit: 'MINUTES' # 'MINUTES' | 'SECONDS'
+#         SuccessCodes: '0'
+## END App Events section ##
+
 InstallerDownload:
   DownloadURL: ""
   DownloadPath: ""
@@ -83,16 +182,21 @@ InstallerDownload:
 
 CaptureCommands:
   Enabled: true
-  PrerequisiteDownload: {}
-  Prerequisites:
-    Enabled: false
-    Commands: []
+  # PrerequisiteDownload: {}
+  # Prerequisites:
+  #   DispositionLayer: 4 
+  #   Installer: Deploy-Application.exe
+  #   InstallerArgs: -DeployMode Silent
+  #   InstallerLogPath: 'C:\Windows\Logs\Software\*{0}*PSAppDeployToolkit*'
+  #   InstallerProcess: ''
+  #   Path: '\\multidrive.mtu.edu\multidrive\install\installers\Microsoft\Desktop Runtime\8\Windows\Standard'
+  #   Version: latest # specific | latest
   InstallerPrefix: ""
   InstallerPath: ""
-  Installer: Deploy-Application.exe # start-package specific
+  Installer: inkscape-{0}_2026-05-05_dcaf3e7-x64.signed_xMx7DJV.msi # start-package specific
   # InstallerFill: "" # functions the same as CommandLineFill - see GIMP for example
-  InstallerCommands: -DeployMode Silent
-  InstallerLogPath: 'C:\Windows\Logs\Software\*{0}*PSAppDeployToolkit*' # start-package specific
+  InstallerCommands: /qn
+  InstallerLogPath: '' # start-package specific
   InstallerProcess: '' # start-package specific
   PostInstallActions:
     Enabled: false

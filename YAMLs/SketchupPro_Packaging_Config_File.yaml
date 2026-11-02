@@ -1,0 +1,257 @@
+yamlConfigVersion: 3.2
+PackagingNotes:
+- ''
+
+## Non Cloudpaging Studio settings ##
+AppSettings:
+  AppName: Sketchup Pro
+  ProductionSTPRepository: ReplaceMe # The full path to the production STPs folder
+  InstallerDirectory: ReplaceMe # The full path to the folder containing production installers/packages
+  PkgStagingDirectory: ReplaceMe # The full path to the folder where in-progress files will be stored
+  STPBackupDirectory: ReplaceMe # The full path to the folder where completed STPs will be backed up
+  AppAdminWebpage: ReplaceMe #The link to edit the application
+
+PrefetchSettings:
+  Manual: true # Needs to be prefetched on a physical system
+  LaunchCommands:
+  - 'PLAYER' # Cloudpaging Player Launch button
+  # - 'C:\ProgramData\Microsoft\Windows\Start Menu\Programs\<shortcut>.lnk' # Application Shortcut
+  # - 'C:\Program Files\Path\to\<program>.exe' # Application executable
+  Launches: 3
+  RuntimeSeconds: 40
+  VirtualizationSeconds: 15
+
+RetentionSettings:
+  STPCount: 2
+  PackageCount: 3 
+  IssueUnmodifiedDays: 30
+## END Non Cloudpaging Studio settings ##
+
+ProjectSettings:
+  ProjectName: AP_SketchUp-Pro_{0}_64bit_x64_NLR_EN_Rel1
+  ProjectDescription: ""
+  IconFile: ""
+  ProjectFileName: ""
+  ProjectFolder: C:\Output
+  TargetCommand:
+    CommandLine: C:\Program Files\SketchUp\SketchUp {0}\SketchUp\SketchUp.exe
+    CommandLineFill: "" # If you want to override the default fill of the current version, you can put a command in here. See GIMP for an example
+    WorkingFolder: ""
+  TargetOS:
+  - ""
+
+# Commands placed here will execute before capture process begins
+# Each array entry is a new line in a BAT file
+PreCaptureCommands: [] 
+
+CaptureSettings:
+  CaptureTimeoutSec: 300 # Increase this value if capturing isn't fully completing
+  CaptureAllProcesses: false
+  IgnoreChangesUnderInstallerPath: true
+  ReplaceRegistryShortPaths: true
+  FileExclusions: # Add file paths here. Examples of wildcards and environment variables shown in sections here
+  - '%userprofile%' # covers <userProfile>\<user>, <LocalAppData>, <RoamingAppData>
+  - '%programdata%\Microsoft\EdgeUpdate' # Can't exclude all of ProgramData\Microsoft because start menu shortcuts live under that folder
+  - '%programdata%\Microsoft\NetFramework' 
+  - '%programdata%\Microsoft\Windows\wfp' # Can't exclude all of ProgramData\Microsoft\Windows for the same reason
+  - '%programdata%\Microsoft\Windows Defender'
+  - '%programdata%\Microsoft\Windows Security Health'
+  - '%programdata%\USOShared'
+  - '%PROGRAMFILES(X86)%\InstallShield Installation Information'
+  - '%winDir%\Installer\*.msp'
+  - '%winDir%\Installer\*.msi'
+  - '%winDir%\INF'
+  - '%winDir%\Microsoft.NET'
+  - '%winDir%\ServiceProfiles'
+  - '%winDir%\SystemTemp'
+  # - '%WinDir%' # covers <Windows>, <System>, and <SystemX86>
+  RegistryExclusions: # Add registry paths to this location
+  - HKEY_CURRENT_USER
+  - HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Internet Explorer
+  - HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\SystemCertificates
+  - HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Wbem
+  - HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT
+  - HKEY_LOCAL_MACHINE\SYSTEM
+  - HKEY_USERS
+  ProcessExclusions:
+  - C:\Windows\System32\svchost.exe
+  ProcessInclusions:
+    IncludeChildProccesses: false
+    Include: []
+
+## START App Events section ##
+# PostCaptureSettings:
+#   ConfigurableAppEvents:
+#     AfterRegistration:
+#       Path: ''
+#       HandlerCommandLine:
+#         Parameters: ''
+#         UseLocalApplication: FALSE
+#       HandlerLaunching:
+#         RunElevated: FALSE
+#         RunAsLocalSystem: TRUE
+#       AfterLaunching:
+#         WaitForExit: TRUE
+#         Timeout: 1
+#         TimeoutUnit: 'MINUTES' # 'MINUTES' | 'SECONDS'
+#         SuccessCodes: '0'
+#     AfterActivation:
+#       Path: ''
+#       HandlerCommandLine:
+#         Parameters: ''
+#         UseLocalApplication: FALSE
+#       HandlerLaunching:
+#         RunElevated: FALSE
+#         RunAsLocalSystem: FALSE
+#       AfterLaunching:
+#         WaitForExit: TRUE
+#         Timeout: 1
+#         TimeoutUnit: 'MINUTES' # 'MINUTES' | 'SECONDS'
+#         SuccessCodes: '0'
+#     AfterVirtualization:
+#       Path: ''
+#       Frequency: 'EveryTime' # 'FirstTime' | 'EveryTime'
+#       HandlerCommandLine:
+#         Parameters: ''
+#         UseLocalApplication: FALSE
+#       HandlerLaunching:
+#         RunVirtualized: TRUE
+#         RunElevated: FALSE      # Mutially exclusive with RunAsLocalSystem
+#         RunAsLocalSystem: FALSE # Mutially exclusive with RunElevated
+#       AfterLaunching:
+#         WaitForExit: TRUE
+#         Timeout: 1
+#         TimeoutUnit: 'MINUTES' # 'MINUTES' | 'SECONDS'
+#         SuccessCodes: '0'
+#     AfterLaunch:
+#       Path: ''
+#       Frequency: 'EveryTime' # 'FirstTime' | 'EveryTime'
+#       HandlerCommandLine:
+#         Parameters: ''
+#         UseLocalApplication: FALSE
+#       HandlerLaunching:
+#         RunVirtualized: TRUE
+#         RunElevated: FALSE      # Mutially exclusive with RunAsLocalSystem
+#         RunAsLocalSystem: FALSE # Mutially exclusive with RunElevated
+#     AfterExit:
+#       Path: ''
+#       Frequency: 'EveryTime' # 'FirstTime' | 'EveryTime'
+#       HandlerCommandLine:
+#         Parameters: ''
+#         UseLocalApplication: FALSE
+#       HandlerLaunching:
+#         RunVirtualized: TRUE
+#         RunElevated: FALSE      # Mutially exclusive with RunAsLocalSystem
+#         RunAsLocalSystem: FALSE # Mutially exclusive with RunElevated
+#       AfterLaunching:
+#         WaitForExit: TRUE
+#         Timeout: 1
+#         TimeoutUnit: 'MINUTES' # 'MINUTES' | 'SECONDS'
+#         SuccessCodes: '0'
+#     BeforeDevirtualization:
+#       Path: ''
+#       Frequency: 'EveryTime' # 'FirstTime' | 'EveryTime'
+#       HandlerCommandLine:
+#         Parameters: ''
+#         UseLocalApplication: FALSE
+#       HandlerLaunching:
+#         RunVirtualized: TRUE
+#         RunElevated: FALSE      # Mutially exclusive with RunAsLocalSystem
+#         RunAsLocalSystem: FALSE # Mutially exclusive with RunElevated
+#       AfterLaunching:
+#         WaitForExit: TRUE
+#         Timeout: 1
+#         TimeoutUnit: 'MINUTES' # 'MINUTES' | 'SECONDS'
+#         SuccessCodes: '0'
+#     BeforeDeactivation:
+#       Path: ''
+#       HandlerCommandLine:
+#         Parameters: ''
+#         UseLocalApplication: FALSE
+#       HandlerLaunching:
+#         RunElevated: FALSE      # Mutially exclusive with RunAsLocalSystem
+#         RunAsLocalSystem: FALSE # Mutially exclusive with RunElevated
+#       AfterLaunching:
+#         WaitForExit: TRUE
+#         Timeout: 1
+#         TimeoutUnit: 'MINUTES' # 'MINUTES' | 'SECONDS'
+#         SuccessCodes: '0'
+## END App Events section ##
+
+InstallerDownload:
+  DownloadURL: ""
+  DownloadPath: ""
+  SHA-256: ""
+
+CaptureCommands:
+  Enabled: true
+  # PrerequisiteDownload: {}
+  # Prerequisites:
+  #   DispositionLayer: 4 
+  #   Installer: Deploy-Application.exe
+  #   InstallerArgs: -DeployMode Silent
+  #   InstallerLogPath: 'C:\Windows\Logs\Software\*{0}*PSAppDeployToolkit*'
+  #   InstallerProcess: ''
+  #   Path: '\\multidrive.mtu.edu\multidrive\install\installers\Microsoft\Desktop Runtime\8\Windows\Standard'
+  #   Version: latest # specific | latest
+  InstallerPrefix: ""
+  InstallerPath: ""
+  Installer: SketchUp-{0}-2-243-76.exe # start-package specific
+  # InstallerFill: "" # functions the same as CommandLineFill - see GIMP for example
+  InstallerCommands: /silent
+  InstallerLogPath: '' # start-package specific
+  InstallerProcess: '' # start-package specific
+  PostInstallActions:
+    Enabled: false
+    Commands: []
+  DebugMode: false
+
+ModifyAssets:
+  AddFiles:
+    activation_info.txt:
+      Name: activation_info.txt
+      Destination: C:\ProgramData\SketchUp\SketchUp 2026\ # not yet set up for version fills
+      Content: [
+        '{',
+        '"serial_number":"<SERIAL_NUMBER>",',
+        '"auth_code":"<AUTH_CODE>"',
+        '}',
+        ''
+      ] # Replace <> values above with your values ^
+    SketchUp.lic:
+      Name: SketchUp.lic
+      Destination: C:\ProgramData\SketchUp\SketchUp 2026\ # not yet set up for version fills
+      Content: [
+        HOST <SERVER_URL> ANY 5053
+        ISV trmbldg port=50530 password="<PASSWORD>"
+        LICENSE trmbldg rlm_roam 1.0 permanent uncounted hostid=ANY
+          _ck=<_CK> sig="<SIG_PART1>
+          <SIG_PART2>"
+      ] # Replace <> values above with your values ^
+  ModifyKeys: {}
+
+VirtualizationSettings:
+  DefaultDispositionLayer: 3
+  DefaultServiceVirtualizationAction: Register
+  FileDispositionLayers:
+    AppData:
+      Path: '%AppData%'
+      Layer: 2
+      Recurse: true
+  RegistryDispositionLayers: {}
+  SandboxFileExclusions: []
+  SandboxRegistryExclusions: []
+
+SecurityOverrideSettings:
+  AllowAccessLayer4:
+    AllowReadAndCopy: true
+    Proccesses: []
+  DenyAccessLayer3: []
+
+OutputSettings:
+  EncryptionMethod: AES-256-Enhanced
+  CompressionMethod: LZMA
+  OutputFileNameNoExt: ""
+  FinalizeIntoSTP: false # {true | false} true if the app should NOT be prefetched and false if the app SHOULD be prefetched
+  OutputFolder: C:\AP_Work
+

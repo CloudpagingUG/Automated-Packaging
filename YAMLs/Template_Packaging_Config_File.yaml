@@ -1,7 +1,7 @@
 # This template is made for ease of adding files for new programs. Simply copy the contents of the template into a new Packaging Config YAML file. 
-# Ctrl + F to look for any "ReplaceMe" occurrences in the file and do exactly that. 
+# Ctrl + F to look for any "ReplaceMe" occurrences in the file and do exactly that. See this doc for more info: https://docs.mtu.edu/x/FgJ_CQ. 
 
-yamlConfigVersion: 3.1
+yamlConfigVersion: 3.2 # prerequisite support (in-progress) | AppEvent Support (complete)
 PackagingNotes:
 - ''
 
@@ -18,8 +18,8 @@ PrefetchSettings:
   # Manual: true # uncomment out if needed 
   LaunchCommands:
   - 'PLAYER' # Cloudpaging Player Launch button
-  # - 'C:\ProgramData\Microsoft\Windows\Start Menu\Programs\<shortcut>.lnk' # Application Shortcut
-  # - 'C:\Program Files\Path\to\<program>.exe' # Application executable
+  - 'C:\ProgramData\Microsoft\Windows\Start Menu\Programs\<shortcut>.lnk' # Application Shortcut
+  - 'C:\Program Files\Path\to\<program>.exe' # Application executable
   Launches: 3
   RuntimeSeconds: 20
   VirtualizationSeconds: 15
@@ -69,16 +69,121 @@ CaptureSettings:
   RegistryExclusions: # Add registry paths to this location
   - HKEY_CURRENT_USER
   - HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Internet Explorer
+  - HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\EnterpriseCertificates
   - HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\SystemCertificates
   - HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Wbem
   - HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT
-  - HKEY_LOCAL_MACHINE\SYSTEM
+  - HKEY_LOCAL_MACHINE\SOFTWARE\Policies
+  - HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Explorer
+  - HKEY_LOCAL_MACHINE\SYSTEM # when there are no services
+  # - HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control      # -----------------------
+  # - HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Enum         # When there are services
+  # - HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\bam # -----------------------
   - HKEY_USERS
   ProcessExclusions:
   - C:\Windows\System32\svchost.exe
   ProcessInclusions:
     IncludeChildProccesses: false
     Include: []
+
+## START App Events section ##
+# PostCaptureSettings:
+#   ConfigurableAppEvents:
+#     AfterRegistration:
+#       Path: ''
+#       HandlerCommandLine:
+#         Parameters: ''
+#         UseLocalApplication: FALSE
+#       HandlerLaunching:
+#         RunElevated: FALSE
+#         RunAsLocalSystem: TRUE
+#       AfterLaunching:
+#         WaitForExit: TRUE
+#         Timeout: 1
+#         TimeoutUnit: 'MINUTES' # 'MINUTES' | 'SECONDS'
+#         SuccessCodes: '0'
+#     AfterActivation:
+#       Path: ''
+#       HandlerCommandLine:
+#         Parameters: ''
+#         UseLocalApplication: FALSE
+#       HandlerLaunching:
+#         RunElevated: FALSE
+#         RunAsLocalSystem: FALSE
+#       AfterLaunching:
+#         WaitForExit: TRUE
+#         Timeout: 1
+#         TimeoutUnit: 'MINUTES' # 'MINUTES' | 'SECONDS'
+#         SuccessCodes: '0'
+#     AfterVirtualization:
+#       Path: ''
+#       Frequency: 'EveryTime' # 'FirstTime' | 'EveryTime'
+#       HandlerCommandLine:
+#         Parameters: ''
+#         UseLocalApplication: FALSE
+#       HandlerLaunching:
+#         RunVirtualized: TRUE
+#         RunElevated: FALSE      # Mutially exclusive with RunAsLocalSystem
+#         RunAsLocalSystem: FALSE # Mutially exclusive with RunElevated
+#       AfterLaunching:
+#         WaitForExit: TRUE
+#         Timeout: 1
+#         TimeoutUnit: 'MINUTES' # 'MINUTES' | 'SECONDS'
+#         SuccessCodes: '0'
+#     AfterLaunch:
+#       Path: ''
+#       Frequency: 'EveryTime' # 'FirstTime' | 'EveryTime'
+#       HandlerCommandLine:
+#         Parameters: ''
+#         UseLocalApplication: FALSE
+#       HandlerLaunching:
+#         RunVirtualized: TRUE
+#         RunElevated: FALSE      # Mutially exclusive with RunAsLocalSystem
+#         RunAsLocalSystem: FALSE # Mutially exclusive with RunElevated
+#     AfterExit:
+#       Path: ''
+#       Frequency: 'EveryTime' # 'FirstTime' | 'EveryTime'
+#       HandlerCommandLine:
+#         Parameters: ''
+#         UseLocalApplication: FALSE
+#       HandlerLaunching:
+#         RunVirtualized: TRUE
+#         RunElevated: FALSE      # Mutially exclusive with RunAsLocalSystem
+#         RunAsLocalSystem: FALSE # Mutially exclusive with RunElevated
+#       AfterLaunching:
+#         WaitForExit: TRUE
+#         Timeout: 1
+#         TimeoutUnit: 'MINUTES' # 'MINUTES' | 'SECONDS'
+#         SuccessCodes: '0'
+#     BeforeDevirtualization:
+#       Path: ''
+#       Frequency: 'EveryTime' # 'FirstTime' | 'EveryTime'
+#       HandlerCommandLine:
+#         Parameters: ''
+#         UseLocalApplication: FALSE
+#       HandlerLaunching:
+#         RunVirtualized: TRUE
+#         RunElevated: FALSE      # Mutially exclusive with RunAsLocalSystem
+#         RunAsLocalSystem: FALSE # Mutially exclusive with RunElevated
+#       AfterLaunching:
+#         WaitForExit: TRUE
+#         Timeout: 1
+#         TimeoutUnit: 'MINUTES' # 'MINUTES' | 'SECONDS'
+#         SuccessCodes: '0'
+#     BeforeDeactivation:
+#       Path: ''
+#       HandlerCommandLine:
+#         Parameters: ''
+#         UseLocalApplication: FALSE
+#       HandlerLaunching:
+#         RunElevated: FALSE      # Mutially exclusive with RunAsLocalSystem
+#         RunAsLocalSystem: FALSE # Mutially exclusive with RunElevated
+#       AfterLaunching:
+#         WaitForExit: TRUE
+#         Timeout: 1
+#         TimeoutUnit: 'MINUTES' # 'MINUTES' | 'SECONDS'
+#         SuccessCodes: '0'
+## END App Events section ##
 
 InstallerDownload:
   DownloadURL: ""
@@ -87,16 +192,21 @@ InstallerDownload:
 
 CaptureCommands:
   Enabled: true
-  PrerequisiteDownload: {}
-  Prerequisites:
-    Enabled: false
-    Commands: []
+  # PrerequisiteDownload: {}
+  # Prerequisites:
+  #   DispositionLayer: 4 
+  #   Installer: Deploy-Application.exe
+  #   InstallerArgs: -DeployMode Silent
+  #   InstallerLogPath: 'C:\Windows\Logs\Software\*{0}*PSAppDeployToolkit*'
+  #   InstallerProcess: ''
+  #   Path: '\\multidrive.mtu.edu\multidrive\install\installers\Microsoft\Desktop Runtime\8\Windows\Standard'
+  #   Version: latest # specific | latest
   InstallerPrefix: ""
   InstallerPath: ""
   Installer: Deploy-Application.exe # start-package specific
   # InstallerFill: "" # functions the same as CommandLineFill - see GIMP for example
   InstallerCommands: -DeployMode Silent
-  InstallerLogPath: 'C:\Windows\Logs\Software\*{0}*PSAppDeployToolkit*' # start-package specific
+  InstallerLogPath: '' # start-package specific
   InstallerProcess: '' # start-package specific
   PostInstallActions:
     Enabled: false

@@ -52,7 +52,10 @@ param (
     [Parameter(Mandatory = $false)][string]$offline = $null,
     [Parameter(Mandatory = $false)][string]$skip_verification = $null,
     [Parameter(Mandatory = $false)][string]$debug_mode = $null,
-    [Parameter(Mandatory = $true, Position = 2)][string]$app_version = $null
+    [Parameter(Mandatory = $true, Position = 2)][string]$app_version = $null,
+    [Parameter(Mandatory = $false)]
+    [ValidateSet('1', '2', '3', '4')]
+    [string]$DefaultDispositionLayer
 )
 
 $NIPS_SCRIPT_VERSION = 1.0         #Version number for nips, this will be stored in revnotes
@@ -60,7 +63,7 @@ $SUPORTED_YAML = 1.0, 1.1, 2.0     #Add supported version in array
 $prescriptURL = "https://raw.githubusercontent.com/Numecent/Automated-Packaging/master/CloudpagingStudio-prep.ps1"
 $datFilesDirectoryURL = "https://raw.githubusercontent.com/Numecent/Automated-Packaging/master/Studio%20DAT%20Files/"
 Write-Output "Installing powershell-yaml module..."
-Import-Module C:\AP_Work\powershell-yaml
+Import-Module C:\AAA_Work\powershell-yaml
 if(!(Get-Module powershell-yaml)){
     Write-Output "powershell-yaml not detected, exiting"
     exit(1)
@@ -711,7 +714,9 @@ $EncryptionMethod = $yaml.OutputSettings.EncryptionMethod
 if($yaml.ProjectSettings.TargetCommand.CommandLineFill){ $CommandLine = $yaml.ProjectSettings.TargetCommand.CommandLine -f $(Invoke-Expression $yaml.ProjectSettings.TargetCommand.CommandLineFill) } else { $CommandLine = $yaml.ProjectSettings.TargetCommand.CommandLine -f $app_version}
 $CommandLineParams = $yaml.ProjectSettings.CommandLineParams
 $CaptureTimeout = $yaml.CaptureSettings.CaptureTimeoutSec
-$DefaultDispositionLayer = $yaml.VirtualizationSettings.DefaultDispositionLayer
+if ($DefaultDispositionLayer -eq '') {
+    $DefaultDispositionLayer = $yaml.VirtualizationSettings.DefaultDispositionLayer
+}
 $OutputFileNameNoExt = $yaml.OutputSettings.OutputFileNameNoExt
 $IconFile = $yaml.ProjectSettings.ProjectIconFile
 $ProjectFolder = ""
